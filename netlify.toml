@@ -1,15 +1,15 @@
 [build]
-  base    = "frontend"
+  base = "frontend"
   command = "pnpm run build"
-  publish = "out"
+  publish = "frontend/out"
 
 [build.environment]
-  NEXT_PUBLIC_API_URL      = "https://market-oracle-api-production.up.railway.app"
+  NEXT_PUBLIC_API_URL = "https://market-oracle-api-production.up.railway.app"
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
-  NODE_VERSION             = "20"
+  NODE_VERSION = "20"
 
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options        = "DENY"
+    X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
