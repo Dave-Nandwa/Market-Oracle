@@ -153,7 +153,7 @@ export function TechnicalsPanel({ symbol }: TechnicalsPanelProps) {
                 tickLine={false}
                 axisLine={false}
                 width={36}
-                tickFormatter={(v: number) => v.toFixed(2)}
+                tickFormatter={(v) => typeof v === "number" ? v.toFixed(2) : String(v)}
               />
               <Tooltip
                 content={({ active, payload, label }) =>

@@ -164,7 +164,7 @@ export function VolatilityPanel({ symbol }: VolatilityPanelProps) {
                 tickLine={false}
                 axisLine={false}
                 width={42}
-                tickFormatter={(v: number) => `${(v * 100).toFixed(0)}%`}
+                tickFormatter={(v) => typeof v === "number" ? `${(v * 100).toFixed(0)}%` : String(v)}
               />
               <Tooltip content={<VolTooltip />} />
               <Area type="monotone" dataKey="rv5" name="RV5" stroke="#6366f1" fill="rgba(99,102,241,0.1)" strokeWidth={1.5} dot={false} />
