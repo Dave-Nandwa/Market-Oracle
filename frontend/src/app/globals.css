@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+/* ── Kraken / Bloomberg Dark Design System ─────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --background: 0 0% 5%;          /* #0D0D14 near-black purple-tinted */
+  --surface: 240 13% 10%;         /* #161622 card backgrounds */
+  --surface-2: 240 10% 13%;       /* #1E1E2E slightly lighter surface */
+  --border: 240 9% 17%;           /* #2A2A3E subtle borders */
+
+  /* Accents */
+  --accent: 262 84% 58%;          /* #7C3AED Kraken purple */
+  --accent-hover: 262 84% 65%;
+  --accent-glow: rgba(124, 58, 237, 0.2);
+
+  /* Semantic */
+  --success: 160 84% 39%;         /* #10B981 green / bullish */
+  --danger: 0 84% 60%;            /* #EF4444 red / bearish */
+  --warning: 38 92% 50%;          /* #F59E0B yellow / medium vol */
+  --orange: 25 95% 53%;           /* #F97316 orange / high vol */
+
+  /* Text */
+  --foreground: 214 32% 91%;      /* #E2E8F0 primary text */
+  --muted-foreground: 215 16% 47%; /* #64748B muted text */
+  --card-foreground: var(--foreground);
+
+  /* Fonts */
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background-color: #0D0D14;
+  color: #E2E8F0;
+  font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Numbers always monospace */
+.tabular-nums, .font-mono, [data-price], [data-value] {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bloomberg-style scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #0D0D14; }
+::-webkit-scrollbar-thumb { background: #2A2A3E; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #7C3AED; }
+
+/* Regime badge colors */
+.regime-LOW    { color: #10B981; border-color: #10B981; }
+.regime-MEDIUM { color: #F59E0B; border-color: #F59E0B; }
+.regime-HIGH   { color: #F97316; border-color: #F97316; }
+.regime-EXTREME{ color: #EF4444; border-color: #EF4444; }
+
+/* Sentiment colors */
+.sentiment-bullish       { color: #10B981; }
+.sentiment-somewhat-bullish { color: #6EE7B7; }
+.sentiment-neutral       { color: #94A3B8; }
+.sentiment-somewhat-bearish { color: #FCA5A5; }
+.sentiment-bearish       { color: #EF4444; }
+
+/* Positive/negative values */
+.positive { color: #10B981; }
+.negative { color: #EF4444; }
+.neutral  { color: #94A3B8; }
+
+/* Surface card */
+.surface-card {
+  background: #161622;
+  border: 1px solid #2A2A3E;
+  border-radius: 8px;
+}
+
+/* Compact data table */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+.data-table td, .data-table th {
+  padding: 4px 8px;
+  border-bottom: 1px solid #2A2A3E;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table th { color: #64748B; font-weight: 500; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.05em; }
+
+/* Market Oracle specific */
+.market-oracle-header {
+  background: linear-gradient(135deg, #0D0D14 0%, #1a1030 100%);
+  border-bottom: 1px solid #2A2A3E;
+}
+
+.ticker-price {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.forecast-cone {
+  fill: rgba(124, 58, 237, 0.1);
+  stroke: none;
+}
+
+.forecast-median {
+  stroke: #7C3AED;
+  stroke-dasharray: 4, 4;
+  stroke-width: 2;
+}
+
+.rv-line {
+  stroke: #A78BFA;
+  stroke-width: 2;
+  fill: none;
+}
