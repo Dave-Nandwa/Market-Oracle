@@ -26,41 +26,59 @@ CACHE_TTL = {
 }
 
 _last_request_time = 0.0
-RATE_LIMIT_DELAY = 0.3  # 300ms between requests
+RATE_LIMIT_DELAY = 0.25  # 250ms between requests = max 4/sec (well under 5/sec limit)
+
+# Semaphore ensures only 1 request fires at a time — prevents burst pattern errors
+# Lazily initialized to avoid issues when there's no running event loop at import time
+_request_semaphore = None  # type: Optional[asyncio.Semaphore]
+
+
+def _get_semaphore() -> asyncio.Semaphore:
+    global _request_semaphore
+    if _request_semaphore is None:
+        _request_semaphore = asyncio.Semaphore(1)
+    return _request_semaphore
 
 
 async def _request(params: dict, cache_key: str, ttl_type: str = "daily") -> dict:
     global _last_request_time
 
-    # Check cache
+    # Check cache (no lock needed — reads are safe)
     if cache_key in _cache:
         data, expires_at = _cache[cache_key]
         if time.time() < expires_at:
             return data
 
-    # Rate limit
-    elapsed = time.time() - _last_request_time
-    if elapsed < RATE_LIMIT_DELAY:
-        await asyncio.sleep(RATE_LIMIT_DELAY - elapsed)
+    async with _get_semaphore():
+        # Re-check cache after acquiring lock (another coroutine may have fetched it)
+        if cache_key in _cache:
+            data, expires_at = _cache[cache_key]
+            if time.time() < expires_at:
+                return data
 
-    params["apikey"] = API_KEY
+        # Rate limit — ensure minimum gap between requests
+        elapsed = time.time() - _last_request_time
+        if elapsed < RATE_LIMIT_DELAY:
+            await asyncio.sleep(RATE_LIMIT_DELAY - elapsed)
 
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        r = await client.get(BASE_URL, params=params)
-        r.raise_for_status()
-        data = r.json()
+        params["apikey"] = API_KEY
 
-    _last_request_time = time.time()
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            r = await client.get(BASE_URL, params=params)
+            r.raise_for_status()
+            data = r.json()
 
-    # Check for rate limit or error responses
-    if "Information" in data or "Note" in data:
-        raise Exception(f"AlphaVantage rate limit hit: {data.get('Information') or data.get('Note')}")
-    if "Error Message" in data:
-        raise Exception(f"AlphaVantage error: {data['Error Message']}")
+        _last_request_time = time.time()
 
-    ttl = CACHE_TTL.get(ttl_type, 3600)
-    _cache[cache_key] = (data, time.time() + ttl)
-    return data
+        # Check for rate limit or error responses
+        if "Information" in data or "Note" in data:
+            raise Exception(f"AlphaVantage rate limit hit: {data.get('Information') or data.get('Note')}")
+        if "Error Message" in data:
+            raise Exception(f"AlphaVantage error: {data['Error Message']}")
+
+        ttl = CACHE_TTL.get(ttl_type, 3600)
+        _cache[cache_key] = (data, time.time() + ttl)
+        return data
 
 
 class AlphaVantage:
