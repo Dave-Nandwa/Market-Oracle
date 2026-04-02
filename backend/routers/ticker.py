@@ -1,8 +1,25 @@
 from fastapi import APIRouter, HTTPException
 from services.alphavantage import av
 from services.volatility import compute_rv, get_regime, compute_autocorrelation, mock_forecast
+from typing import Optional
 
 router = APIRouter(prefix="/api/ticker", tags=["ticker"])
+
+
+def _f(value, default=None) -> Optional[float]:
+    """Safely cast AlphaVantage string value to float, stripping % and whitespace."""
+    try:
+        if value is None or str(value).strip() in ("", "None", "N/A", "-"):
+            return default
+        return float(str(value).replace("%", "").strip())
+    except (ValueError, TypeError):
+        return default
+
+
+def _i(value, default=None) -> Optional[int]:
+    """Safely cast to int."""
+    v = _f(value)
+    return int(v) if v is not None else default
 
 
 @router.get("/{symbol}/overview")
@@ -10,6 +27,8 @@ async def get_overview(symbol: str):
     try:
         overview, quote = await av.overview(symbol), await av.global_quote(symbol)
         gq = quote.get("Global Quote", {})
+        # changePct comes as "0.7250%" — strip the %
+        change_pct_raw = gq.get("10. change percent", "")
         return {
             "symbol": symbol.upper(),
             "name": overview.get("Name", ""),
@@ -19,31 +38,31 @@ async def get_overview(symbol: str):
             "exchange": overview.get("Exchange", ""),
             "currency": overview.get("Currency", "USD"),
             "country": overview.get("Country", ""),
-            "marketCap": overview.get("MarketCapitalization", ""),
-            "price": gq.get("05. price", ""),
-            "change": gq.get("09. change", ""),
-            "changePct": gq.get("10. change percent", ""),
-            "volume": gq.get("06. volume", ""),
-            "previousClose": gq.get("08. previous close", ""),
-            "high52week": overview.get("52WeekHigh", ""),
-            "low52week": overview.get("52WeekLow", ""),
-            "pe": overview.get("PERatio", ""),
-            "forwardPE": overview.get("ForwardPE", ""),
-            "evToEbitda": overview.get("EVToEBITDA", ""),
-            "priceToBook": overview.get("PriceToBookRatio", ""),
-            "eps": overview.get("EPS", ""),
-            "dividendYield": overview.get("DividendYield", ""),
-            "beta": overview.get("Beta", ""),
-            "analystTargetPrice": overview.get("AnalystTargetPrice", ""),
-            "analystRatingBuy": overview.get("AnalystRatingBuy", ""),
-            "analystRatingHold": overview.get("AnalystRatingHold", ""),
-            "analystRatingSell": overview.get("AnalystRatingSell", ""),
-            "revenueGrowthYOY": overview.get("QuarterlyRevenueGrowthYOY", ""),
-            "earningsGrowthYOY": overview.get("QuarterlyEarningsGrowthYOY", ""),
-            "profitMargin": overview.get("ProfitMargin", ""),
-            "ma50": overview.get("50DayMovingAverage", ""),
-            "ma200": overview.get("200DayMovingAverage", ""),
-            "nextEarnings": overview.get("EarningsDate", ""),
+            "marketCap": _f(overview.get("MarketCapitalization")),
+            "price": _f(gq.get("05. price")),
+            "change": _f(gq.get("09. change")),
+            "changePct": _f(change_pct_raw),
+            "volume": _i(gq.get("06. volume")),
+            "previousClose": _f(gq.get("08. previous close")),
+            "high52week": _f(overview.get("52WeekHigh")),
+            "low52week": _f(overview.get("52WeekLow")),
+            "pe": _f(overview.get("PERatio")),
+            "forwardPE": _f(overview.get("ForwardPE")),
+            "evToEbitda": _f(overview.get("EVToEBITDA")),
+            "priceToBook": _f(overview.get("PriceToBookRatio")),
+            "eps": _f(overview.get("EPS")),
+            "dividendYield": _f(overview.get("DividendYield")),
+            "beta": _f(overview.get("Beta")),
+            "analystTargetPrice": _f(overview.get("AnalystTargetPrice")),
+            "analystRatingBuy": _i(overview.get("AnalystRatingBuy"), 0),
+            "analystRatingHold": _i(overview.get("AnalystRatingHold"), 0),
+            "analystRatingSell": _i(overview.get("AnalystRatingSell"), 0),
+            "revenueGrowthYOY": _f(overview.get("QuarterlyRevenueGrowthYOY")),
+            "earningsGrowthYOY": _f(overview.get("QuarterlyEarningsGrowthYOY")),
+            "profitMargin": _f(overview.get("ProfitMargin")),
+            "ma50": _f(overview.get("50DayMovingAverage")),
+            "ma200": _f(overview.get("200DayMovingAverage")),
+            "nextEarnings": overview.get("EarningsDate") or None,
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
