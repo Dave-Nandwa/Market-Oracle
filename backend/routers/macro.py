@@ -21,10 +21,17 @@ async def get_macro():
         av.index_data("COMP", "daily"),
         av.federal_funds_rate("monthly"),
         av.treasury_yield("daily", "10year"),
+        av.commodity("WTI", "monthly"),
+        av.commodity("BRENT", "monthly"),
+        av.commodity("GOLD", "monthly"),
+        av.real_gdp("quarterly"),
+        av.cpi("monthly"),
+        av.unemployment(),
+        av.market_status(),
         return_exceptions=True,
     )
 
-    vix_raw, spx_raw, comp_raw, fed_raw, treasury_raw = results
+    vix_raw, spx_raw, comp_raw, fed_raw, treasury_raw, wti_raw, brent_raw, gold_raw, gdp_raw, cpi_raw, unemp_raw, mstatus_raw = results
 
     def latest_index(data) -> dict | None:
         if isinstance(data, Exception):
@@ -63,10 +70,36 @@ async def get_macro():
                 return None
         return None
 
+    def parse_market_status(data) -> list | None:
+        if isinstance(data, Exception):
+            logger.warning("Market status unavailable: %s", data)
+            return None
+        markets = data.get("markets", [])
+        if not markets:
+            return None
+        result = []
+        for m in markets:
+            result.append({
+                "market_type": m.get("market_type", ""),
+                "region": m.get("region", ""),
+                "exchange_name": m.get("exchange_name", ""),
+                "local_open": m.get("local_open", ""),
+                "local_close": m.get("local_close", ""),
+                "current_status": m.get("current_status", ""),
+            })
+        return result
+
     return {
         "vix": latest_index(vix_raw),
         "spx": latest_index(spx_raw),
         "comp": latest_index(comp_raw),
         "fedRate": latest_series(fed_raw),
         "treasury10y": latest_series(treasury_raw),
+        "wti": latest_series(wti_raw),
+        "brent": latest_series(brent_raw),
+        "gold": latest_series(gold_raw),
+        "realGDP": latest_series(gdp_raw),
+        "cpi": latest_series(cpi_raw),
+        "unemployment": latest_series(unemp_raw),
+        "marketStatus": parse_market_status(mstatus_raw),
     }

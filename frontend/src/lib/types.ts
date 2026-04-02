@@ -81,6 +81,10 @@ export interface TechnicalIndicators {
   ema20: TechnicalDataPoint[]
   ema50: TechnicalDataPoint[]
   ema200: TechnicalDataPoint[]
+  adx: TechnicalDataPoint[]
+  obv: TechnicalDataPoint[]
+  stoch: TechnicalDataPoint[]
+  mfi: TechnicalDataPoint[]
 }
 
 export interface NewsArticle {
@@ -117,6 +121,87 @@ export interface MacroData {
   comp: MacroMetric | null
   fedRate: MacroMetric | null
   treasury10y: MacroMetric | null
+  gold: MacroMetric | null
+  wti: MacroMetric | null
+  brent: MacroMetric | null
+  realGDP: MacroMetric | null
+  cpi: MacroMetric | null
+  unemployment: MacroMetric | null
+  marketStatus: Array<{
+    market_type: string
+    region: string
+    exchange_name: string
+    local_open?: string
+    local_close?: string
+    current_status: string
+  }> | null
+}
+
+export interface FinancialStatement {
+  date: string
+  revenue?: number | null
+  grossProfit?: number | null
+  operatingIncome?: number | null
+  netIncome?: number | null
+  ebitda?: number | null
+  eps?: number | null
+  epsDiluted?: number | null
+  totalAssets?: number | null
+  totalLiabilities?: number | null
+  totalEquity?: number | null
+  cash?: number | null
+  longTermDebt?: number | null
+  operatingCashflow?: number | null
+  capex?: number | null
+  freeCashflow?: number | null
+  dividendPayout?: number | null
+}
+
+export interface FinancialsData {
+  symbol: string
+  income: FinancialStatement[]
+  balance: FinancialStatement[]
+  cashflow: FinancialStatement[]
+}
+
+export interface EarningsQuarter {
+  date: string
+  reported: number | null
+  estimated: number | null
+  surprise: number | null
+  surprisePct: number | null
+}
+
+export interface EarningsData {
+  symbol: string
+  quarters: EarningsQuarter[]
+}
+
+export interface InsiderTransaction {
+  executive: string
+  shares: number
+  type: string
+  price: number | null
+  date: string
+  value: number | null
+}
+
+export interface InsidersData {
+  symbol: string
+  transactions: InsiderTransaction[]
+}
+
+export interface MarketMover {
+  ticker: string
+  price: string
+  change: string
+  volume: string
+}
+
+export interface MarketMovers {
+  gainers: MarketMover[]
+  losers: MarketMover[]
+  mostActive: MarketMover[]
 }
 
 export interface SearchResult {

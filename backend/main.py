@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import ticker, intelligence, macro, search
+from routers import ticker, intelligence, macro, search, market
 
 app = FastAPI(
     title="Market Oracle API",
@@ -25,6 +25,7 @@ app.include_router(ticker.router)
 app.include_router(intelligence.router)
 app.include_router(macro.router)
 app.include_router(search.router)
+app.include_router(market.router)
 
 
 @app.get("/")

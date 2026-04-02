@@ -8,6 +8,8 @@ const MACRO_LABELS: Record<string, string> = {
   comp: "COMP",
   fedRate: "FED",
   treasury10y: "10Y",
+  gold: "GOLD",
+  wti: "WTI",
 }
 
 export function MacroPills() {
@@ -36,18 +38,20 @@ export function MacroPills() {
     { key: "comp", value: data.comp?.value ?? null },
     { key: "fedRate", value: data.fedRate?.value ?? null },
     { key: "treasury10y", value: data.treasury10y?.value ?? null },
+    { key: "gold", value: data.gold?.value ?? null, prefix: "$" },
+    { key: "wti", value: data.wti?.value ?? null, prefix: "$" },
   ]
 
   return (
-    <div className="flex gap-2 items-center">
-      {pills.map(({ key, value }) => (
+    <div className="flex gap-2 items-center flex-wrap">
+      {pills.map(({ key, value, prefix }) => (
         <div
           key={key}
           className="flex items-center gap-1 px-2 py-1 rounded bg-[#111113] border border-[#1f1f23] text-xs"
         >
           <span className="text-[#71717a] font-medium">{MACRO_LABELS[key]}</span>
           <span className="font-mono text-[#f4f4f5]">
-            {value != null ? value.toFixed(2) : "—"}
+            {value != null ? `${prefix ?? ""}${value.toFixed(2)}` : "—"}
           </span>
         </div>
       ))}

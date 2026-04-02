@@ -162,13 +162,128 @@ class AlphaVantage:
             ttl_type="indicator",
         )
 
+    # ── Financial Statements ─────────────────────────────────────────────────
+
+    async def income_statement(self, symbol: str) -> dict:
+        return await _request(
+            {"function": "INCOME_STATEMENT", "symbol": symbol},
+            cache_key=f"income_stmt:{symbol}",
+            ttl_type="overview",
+        )
+
+    async def balance_sheet(self, symbol: str) -> dict:
+        return await _request(
+            {"function": "BALANCE_SHEET", "symbol": symbol},
+            cache_key=f"balance_sheet:{symbol}",
+            ttl_type="overview",
+        )
+
+    async def cash_flow(self, symbol: str) -> dict:
+        return await _request(
+            {"function": "CASH_FLOW", "symbol": symbol},
+            cache_key=f"cash_flow:{symbol}",
+            ttl_type="overview",
+        )
+
     # ── Alpha Intelligence ────────────────────────────────────────────────────
+
+    async def insider_transactions(self, symbol: str) -> dict:
+        return await _request(
+            {"function": "INSIDER_TRANSACTIONS", "symbol": symbol},
+            cache_key=f"insiders:{symbol}",
+            ttl_type="overview",
+        )
+
+    async def top_gainers_losers(self) -> dict:
+        return await _request(
+            {"function": "TOP_GAINERS_LOSERS"},
+            cache_key="top_gainers_losers",
+            ttl_type="news",
+        )
 
     async def news_sentiment(self, tickers: str, limit: int = 20) -> dict:
         return await _request(
             {"function": "NEWS_SENTIMENT", "tickers": tickers, "sort": "LATEST", "limit": limit},
             cache_key=f"news:{tickers}:{limit}",
             ttl_type="news",
+        )
+
+    # ── Technical Indicators (new) ───────────────────────────────────────────
+
+    async def adx(self, symbol: str, interval: str = "daily", time_period: int = 14) -> dict:
+        return await _request(
+            {"function": "ADX", "symbol": symbol, "interval": interval, "time_period": time_period},
+            cache_key=f"adx:{symbol}:{interval}:{time_period}",
+            ttl_type="indicator",
+        )
+
+    async def obv(self, symbol: str, interval: str = "daily") -> dict:
+        return await _request(
+            {"function": "OBV", "symbol": symbol, "interval": interval},
+            cache_key=f"obv:{symbol}:{interval}",
+            ttl_type="indicator",
+        )
+
+    async def stoch(self, symbol: str, interval: str = "daily") -> dict:
+        return await _request(
+            {"function": "STOCH", "symbol": symbol, "interval": interval},
+            cache_key=f"stoch:{symbol}:{interval}",
+            ttl_type="indicator",
+        )
+
+    async def mfi(self, symbol: str, interval: str = "daily", time_period: int = 14) -> dict:
+        return await _request(
+            {"function": "MFI", "symbol": symbol, "interval": interval, "time_period": time_period},
+            cache_key=f"mfi:{symbol}:{interval}:{time_period}",
+            ttl_type="indicator",
+        )
+
+    # ── Economic Indicators ───────────────────────────────────────────────────
+
+    async def real_gdp(self, interval: str = "quarterly") -> dict:
+        return await _request(
+            {"function": "REAL_GDP", "interval": interval},
+            cache_key=f"real_gdp:{interval}",
+            ttl_type="macro",
+        )
+
+    async def cpi(self, interval: str = "monthly") -> dict:
+        return await _request(
+            {"function": "CPI", "interval": interval},
+            cache_key=f"cpi:{interval}",
+            ttl_type="macro",
+        )
+
+    async def unemployment(self) -> dict:
+        return await _request(
+            {"function": "UNEMPLOYMENT"},
+            cache_key="unemployment",
+            ttl_type="macro",
+        )
+
+    async def nonfarm_payroll(self) -> dict:
+        return await _request(
+            {"function": "NONFARM_PAYROLL"},
+            cache_key="nonfarm_payroll",
+            ttl_type="macro",
+        )
+
+    # ── Market Status ─────────────────────────────────────────────────────────
+
+    async def market_status(self) -> dict:
+        return await _request(
+            {"function": "MARKET_STATUS"},
+            cache_key="market_status",
+            ttl_type="news",
+        )
+
+    # ── Commodities ───────────────────────────────────────────────────────────
+
+    async def commodity(self, name: str, interval: str = "monthly") -> dict:
+        return await _request(
+            {"function": name, "interval": interval},
+            cache_key=f"commodity:{name}:{interval}",
+            ttl_type="macro",
         )
 
     # ── Index Data (Premium) ─────────────────────────────────────────────────

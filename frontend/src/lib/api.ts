@@ -6,6 +6,10 @@ import type {
   NewsData,
   MacroData,
   SearchResult,
+  FinancialsData,
+  EarningsData,
+  InsidersData,
+  MarketMovers,
 } from "./types"
 
 const BASE_URL = "https://market-oracle-api-production.up.railway.app"
@@ -40,4 +44,16 @@ export const api = {
 
   search: (query: string) =>
     fetchJSON<SearchResult[]>(`${BASE_URL}/api/search?q=${encodeURIComponent(query)}`),
+
+  getFinancials: (symbol: string) =>
+    fetchJSON<FinancialsData>(`${BASE_URL}/api/ticker/${symbol}/financials`),
+
+  getEarnings: (symbol: string) =>
+    fetchJSON<EarningsData>(`${BASE_URL}/api/ticker/${symbol}/earnings`),
+
+  getInsiders: (symbol: string) =>
+    fetchJSON<InsidersData>(`${BASE_URL}/api/ticker/${symbol}/insiders`),
+
+  getMarketMovers: () =>
+    fetchJSON<MarketMovers>(`${BASE_URL}/api/market/movers`),
 }

@@ -1,5 +1,6 @@
 import { SearchBar } from "./SearchBar"
 import { Button } from "@/components/ui/button"
+import { MarketMovers } from "./MarketMovers"
 
 const QUICK_PICKS = ["SPY", "QQQ", "AAPL", "NVDA", "TSLA", "BTC", "ETH"]
 
@@ -43,6 +44,11 @@ export function HomePage({ onSelectTicker }: HomePageProps) {
               {symbol}
             </Button>
           ))}
+        </div>
+
+        {/* Market Movers */}
+        <div className="w-full">
+          <MarketMovers />
         </div>
       </div>
     </div>
