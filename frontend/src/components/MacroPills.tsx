@@ -31,11 +31,11 @@ export function MacroPills() {
   if (!data) return null
 
   const pills = [
-    { key: "vix", value: data.vix?.value },
-    { key: "spx", value: data.spx?.value },
-    { key: "comp", value: data.comp?.value },
-    { key: "fedRate", value: data.fedRate?.value },
-    { key: "treasury10y", value: data.treasury10y?.value },
+    { key: "vix", value: data.vix?.value ?? null },
+    { key: "spx", value: data.spx?.value ?? null },
+    { key: "comp", value: data.comp?.value ?? null },
+    { key: "fedRate", value: data.fedRate?.value ?? null },
+    { key: "treasury10y", value: data.treasury10y?.value ?? null },
   ]
 
   return (

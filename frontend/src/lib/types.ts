@@ -112,11 +112,11 @@ export interface MacroMetric {
 }
 
 export interface MacroData {
-  vix: MacroMetric
-  spx: MacroMetric
-  comp: MacroMetric
-  fedRate: MacroMetric
-  treasury10y: MacroMetric
+  vix: MacroMetric | null
+  spx: MacroMetric | null
+  comp: MacroMetric | null
+  fedRate: MacroMetric | null
+  treasury10y: MacroMetric | null
 }
 
 export interface SearchResult {
