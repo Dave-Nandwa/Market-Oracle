@@ -1,21 +1,2 @@
-[build]
-  command = "pnpm run build"
-  publish = "out"
-
-[build.environment]
-  NEXT_PUBLIC_API_URL = "https://market-oracle-api-production.up.railway.app"
-  NETLIFY_NEXT_PLUGIN_SKIP = "true"
-  NODE_VERSION = "20"
-  NPM_FLAGS = "--version"
-
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
+# Build configuration is in the root netlify.toml (base = "frontend").
+# This file is intentionally minimal to avoid conflicts.
